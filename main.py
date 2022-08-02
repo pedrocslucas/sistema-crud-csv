@@ -90,8 +90,30 @@ def listar(lista):
 
 
 #------------------------- Editar
-def editar(lista):
-    return 0
+def editar(lista, pos):
+    user = []
+    new_lista = list()
+    for i in range(0, len(lista)):
+        if i == pos:
+            user = lista[i]
+    while True:
+        try:
+            print("O que deseja alterar?\n1 - nome de usuário\n2 - email\n3 - senha")
+            item = ut.lerInt('Digite sua opção: ')
+            if item == 1:
+                #...code
+                break
+            elif item == 2:
+                #...code
+                break
+            elif item == 3:
+                #...code
+                break
+            else:
+                print('Opção Inválida...\n')
+        except:
+            print('Erro ao editar usuário...\n')
+
 
 #------------------------ Excluir
 def excluir(lista, pos):
@@ -112,7 +134,7 @@ def excluir(lista, pos):
                 print('Operação Cancelada!\n')
                 break
         except:
-            print('Erro ao excluir usuário...')
+            print('Erro ao excluir usuário...\n')
     return new_lista
 
 
@@ -127,6 +149,7 @@ def salvar(lista, file):
 
 #header = ['Id', 'Usuario', 'Email', 'Senha']
 dados = list()
+file = 'dados.csv'
 
 with open('dados.csv', 'r+', newline='') as arquivo:
     writer = csv.writer(arquivo)
@@ -142,19 +165,21 @@ with open('dados.csv', 'r+', newline='') as arquivo:
             new_user = list()
             new_user = (cadastrar(dados))
             dados.append(new_user)
-            salvar(dados, 'dados.csv')
+            salvar(dados, file)
         elif op == 2:
             listar(dados)
         elif op == 3:
             #...editar
-            inList(dados)
-            continue
+            pos = inList(dados)
+            if pos != 0:
+                dados = editar(dados, pos)
+                salvar(dados, file)
         elif op == 4:
             #...excluir
             pos = inList(dados)
             if pos != 0:
                 dados = excluir(dados, pos)
-                salvar(dados, 'dados.csv')
+                salvar(dados, file)
         elif op == 5:
-            salvar(dados, 'dados.csv')
+            salvar(dados, file)
             break
