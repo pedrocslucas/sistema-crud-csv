@@ -1,6 +1,7 @@
 import csv
 import uteis as ut
 
+#------------------ Menu da Aplicação
 def menu():
     print("""1 - Cadastrar
 2 - Listar
@@ -8,7 +9,36 @@ def menu():
 4 - Deletar
 5 - Sair e Salvar""")
 
-#------------------ Usuário na lista
+
+def listaVazia(lista):
+    if len(lista) == 1:
+        return True
+    else:
+        return False
+
+
+def temId(id, lista):
+    pode = True
+    for conta in lista:
+        if conta[0] == id:
+            pode = False
+    return pode
+
+
+#------------------ Retorna um Id Válido para um usuário
+def retornarId(lista):
+    id = int(len(lista))
+    if not listaVazia(lista):
+        while True:
+            for conta in lista:
+                if id == conta[0]:
+                    id += 1
+            if temId:
+                break
+    return id
+
+
+#------------------ Encontrar Posição do Usuário na lista
 def inList(lista):
     encontrado = False
     pos = 0
@@ -32,14 +62,17 @@ def inList(lista):
         print(f'Usuário não encontrado! {user}')
         return 0
 
+
 #----------------- Mesmo Nome de Usuário
 def sameUser(user, lista):
     pode = True
-    for conta in lista:
-        if conta[1] == user:
-            print('Nome de usuário já existente!')
-            pode = False
+    if not listaVazia(lista):
+        for conta in lista:
+            if conta[1] == user:
+                print('Nome de usuário já existente!')
+                pode = False
     return pode
+
 
 #----------------- Cadastrar
 def cadastrar(lista):
@@ -47,7 +80,7 @@ def cadastrar(lista):
     while True:
         try:
             while True:
-                id = str(len(lista))
+                id = retornarId(lista)
                 nome = str(input('Digite seu nome de usuário: ')).strip().lower()
                 if sameUser(nome, lista):
                     break
@@ -69,10 +102,11 @@ def cadastrar(lista):
             break
     return dado
 
+
 #------------------------- Listar os Usuários
 def listar(lista):
     try:
-        if(len(lista) == 1):
+        if listaVazia(lista):
             print('Lista Vazia!')
         else:
             print(f'{"Lista de Contas":^30}')
@@ -100,19 +134,50 @@ def editar(lista, pos):
         try:
             print("O que deseja alterar?\n1 - nome de usuário\n2 - email\n3 - senha")
             item = ut.lerInt('Digite sua opção: ')
-            if item == 1:
-                #...code
+            if item == 1: # Editando Nome - [1]
+                while True:
+                    nome = str(input('Digite o novo nome de usuário: ')).strip()
+                    if nome == user[1]:
+                        print('O nome não pode ser igual ao anterior!')
+                    elif sameUser(nome, lista):
+                        print('NOME de usuário alterado com Sucesso!')
+                        user[1] = nome
+                        break
                 break
-            elif item == 2:
-                #...code
+            elif item == 2: # Editando Email - [2]
+                while True:
+                    email = str(input('Digite o novo email do usuário: ')).strip()
+                    if email == user[2]:
+                        print('O email não pode ser igual ao anterior!')
+                    else:
+                        print('EMAIL do usuário alterado com Sucesso!')
+                        user[2] = email
+                        break
                 break
-            elif item == 3:
-                #...code
+            elif item == 3: # Editando Senha - [3]
+                while True:
+                    senha = str(input('Digite a nova senha: ')).strip()
+                    if senha == user[3]:
+                        print('A nova senha não pode ser igual a anterior!')
+                    else:
+                        confSenha = str(input('Confirme a senha: ')).strip()
+                        if confSenha != senha:
+                            print('As senhas devem ser iguais!')
+                        else:
+                            print('SENHA do usuário alterada com Sucesso!')
+                            user[3] = senha
+                            break
                 break
             else:
                 print('Opção Inválida...\n')
         except:
             print('Erro ao editar usuário...\n')
+            break
+    #Deletando Usuário Editado
+    lista.pop(pos)
+    new_lista = lista
+    new_lista.insert(pos, user) #Adicionando Usuário Editado!
+    return new_lista
 
 
 #------------------------ Excluir
@@ -138,8 +203,9 @@ def excluir(lista, pos):
     return new_lista
 
 
+#---------------------- Salvar Arquivo
 def salvar(lista, file):
-    with open(file, 'w+', newline="") as arquivo:
+    with open(file, 'w', newline='') as arquivo:
         writer = csv.writer(arquivo)
         writer.writerows(lista)
         print('Arquivo Salvo!')
@@ -154,19 +220,23 @@ file = 'dados.csv'
 with open('dados.csv', 'r+', newline='') as arquivo:
     writer = csv.writer(arquivo)
     leitor = csv.reader(arquivo)
+    #Carregar dados!
     for linha in leitor:
-        dados.append(linha)
+        if not len(linha) == 0:
+            dados.append(linha)
     while True:
         menu()
         op = ut.lerInt('Digite sua opção: ')
         if op < 1 or op > 5:
             print('Opção Inválida...\n')
         elif op == 1:
+            #...cadastrar
             new_user = list()
             new_user = (cadastrar(dados))
             dados.append(new_user)
             salvar(dados, file)
         elif op == 2:
+            #...listar dados
             listar(dados)
         elif op == 3:
             #...editar
