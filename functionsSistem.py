@@ -17,24 +17,10 @@ def listaVazia(lista):
         return False
 
 
-def temId(id, lista):
-    pode = True
-    for conta in lista:
-        if conta[0] == id:
-            pode = False
-    return pode
-
-
 #------------------ Retorna um Id Válido para um usuário
 def retornarId(lista):
-    id = int(len(lista))
     if not listaVazia(lista):
-        while True:
-            for conta in lista:
-                if id == conta[0]:
-                    id += 1
-            if temId:
-                break
+        id = lista[-1][0] + 1 #somando 1 com o id da última conta
     return id
 
 
